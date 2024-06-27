@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sample Strength Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+        }
+
+        .sample {
+            width: 100vw;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        .samp1,
+        .samp2,
+        .samp3 {
+            display: grid;
+            margin: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: auto;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            input[type="text"],
+            input[type="number"] {
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sample Strength Calculator</h1>
+
+    <div class="sample">
+        <div class="samp1">
+            <label for="id1">Sample ID 1:</label>
+            <input type="text" id="id1" name="id1"><br><br>
+
+            <label for="weight1">Sample Weight 1:</label>
+            <input type="number" id="weight1" name="weight1"><br><br>
+
+            <label for="dimension1">Sample Dimension 1:</label>
+            <input type="number" id="dimension1" name="dimension1"><br><br>
+
+            <label for="load1">Sample Failure Load 1:</label>
+            <input type="number" id="load1" name="load1"><br><br>
+
+        </div>
+
+        <div class="samp2">
+            <label for="id2">Sample ID 2:</label>
+            <input type="text" id="id2" name="id2"><br><br>
+
+            <label for="weight2">Sample Weight 2:</label>
+            <input type="number" id="weight2" name="weight2"><br><br>
+
+            <label for="dimension2">Sample Dimension 2:</label>
+            <input type="number" id="dimension2" name="dimension2"><br><br>
+
+            <label for="load2">Sample Failure Load 2:</label>
+            <input type="number" id="load2" name="load2"><br><br>
+        </div>
+
+        <div class="samp3">
+            <label for="id3">Sample ID 3:</label>
+            <input type="text" id="id3" name="id3"><br>
+
+            <label for="weight3">Sample Weight 3:</label>
+            <input type="number" id="weight3" name="weight3"><br>
+
+            <label for="dimension3">Sample Dimension 3:</label>
+            <input type="number" id="dimension3" name="dimension3"><br>
+
+            <label for="load3">Sample Failure Load 3:</label>
+            <input type="number" id="load3" name="load3"><br>
+        </div>
+        <button onclick="calculateSampleStrength()">Calculate</button>
+    </div>
+
+
+    <div id="output"></div>
+
+    <script>
+        function calculateSampleStrength() {
+            const id1 = document.getElementById("id1").value;
+            const weight1 = parseFloat(document.getElementById("weight1").value);
+            const dimension1 = parseFloat(document.getElementById("dimension1").value);
+            const load1 = parseFloat(document.getElementById("load1").value);
+
+            const id2 = document.getElementById("id2").value;
+            const weight2 = parseFloat(document.getElementById("weight2").value);
+            const dimension2 = parseFloat(document.getElementById("dimension2").value);
+            const load2 = parseFloat(document.getElementById("load2").value);
+
+            const id3 = document.getElementById("id3").value;
+            const weight3 = parseFloat(document.getElementById("weight3").value);
+            const dimension3 = parseFloat(document.getElementById("dimension3").value);
+            const load3 = parseFloat(document.getElementById("load3").value);
+
+            const density1 = weight1 / (dimension1 * dimension1 * dimension1);
+            const strength1 = load1 / (dimension1 * dimension1);
+
+            const density2 = weight2 / (dimension2 * dimension2 * dimension2);
+            const strength2 = load2 / (dimension2 * dimension2);
+
+            const density3 = weight3 / (dimension3 * dimension3 * dimension3);
+            const strength3 = load3 / (dimension3 * dimension3);
+
+            let finalStrength;
+            const strengthVariation = Math.max(
+                Math.abs((strength1 - strength2) / strength1),
+                Math.abs((strength1 - strength3) / strength1),
+                Math.abs((strength2 - strength3) / strength2)
+            );
+
+            if (strengthVariation > 0.1) {
+                finalStrength = "Reject result";
+            } else if (
+                Math.abs((strength1 - strength2) / strength1) <= 0.1 &&
+                Math.abs((strength1 - strength3) / strength1) > 0.1
+            ) {
+                finalStrength = (strength1 + strength2) / 2;
+            } else {
+                finalStrength = (strength1 + strength2 + strength3) / 3;
+            }
+
+            // Display results
+            const output = document.getElementById("output");
+            output.innerHTML = `
+        <h2>Measured Values</h2>
+        <p>Sample ID 1: ${id1}, Weight: ${weight1}, Dimension: ${dimension1}, Failure Load: ${load1}</p>
+        <p>Sample ID 2: ${id2}, Weight: ${weight2}, Dimension: ${dimension2}, Failure Load: ${load2}</p>
+        <p>Sample ID 3: ${id3}, Weight: ${weight3}, Dimension: ${dimension3}, Failure Load: ${load3}</p>
+
+        <h2>Calculated Values</h2>
+        <p>Sample 1 Density: ${density1.toFixed(2)}</p>
+        <p>Sample 1 Strength: ${strength1.toFixed(2)}</p>
+        <p>Sample 2 Density: ${density2.toFixed(2)}</p>
+        <p>Sample 2 Strength: ${strength2.toFixed(2)}</p>
+        <p>Sample 3 Density: ${density3.toFixed(2)}</p>
+        <p>Sample 3 Strength: ${strength3.toFixed(2)}</p>
+
+        <h2>Final Strength</h2>
+        <p>${finalStrength.toFixed(2)}</p>
+      `;
+        }
+    </script>
+</body>
+
+</html>
